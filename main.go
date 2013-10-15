@@ -1,10 +1,15 @@
 package main
 
 import (
-    "net"
     "fmt"
-    "flag"
     "log"
+
+    "strings"
+
+    "flag"
+
+    "net"
+
     "github.com/andreadipersio/ds2key-srv/parser"
     "github.com/andreadipersio/ds2key-srv/kbd"
 )
@@ -19,6 +24,8 @@ var (
 func init() {
     flag.IntVar(&port, "port", 9501, "DS2KEY Port")
     flag.BoolVar(&verbose, "verbose", false, "Enable logging of keystrokes on stderr")
+
+    flag.Parse()
 
     status = make(map[string] bool)
 }
@@ -40,6 +47,20 @@ func released(keys []string, key string) bool {
     }
 
     return true
+}
+
+func logKeyStatus() {
+    var s = []string{}
+
+    for key, isPressed := range status {
+        if !isPressed {
+            continue
+        }
+
+        s = append(s, fmt.Sprintf("[%v]", key))
+    }
+
+    log.Print(strings.Join(s, " --- "))
 }
 
 
@@ -95,6 +116,10 @@ func main() {
                 kbd.KeyUp(key)
                 status[key] = false
             }
+        }
+
+        if verbose {
+            logKeyStatus()
         }
     }
 }
