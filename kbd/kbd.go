@@ -4,7 +4,7 @@ package kbd
 #cgo CFLAGS: -Qunused-arguments
 #cgo LDFLAGS: -framework ApplicationServices
 #include <ApplicationServices/ApplicationServices.h>
-#include <stdio.h>
+#include <Carbon/Carbon.h>
 
 void keyevt(int keycode, bool isdown) {
     CGEventRef evt;
@@ -15,22 +15,22 @@ void keyevt(int keycode, bool isdown) {
 import "C"
 
 var KEYS = map[string] int32{
-    "KEY_UP": 126,    // UP
-    "KEY_DOWN": 125,  // DOWN
-    "KEY_LEFT": 123,  // LEFT
-    "KEY_RIGHT": 124, // RIGHT
+    "KEY_UP"    : C.kVK_UpArrow,
+    "KEY_DOWN"  : C.kVK_DownArrow,
+    "KEY_LEFT"  : C.kVK_LeftArrow,
+    "KEY_RIGHT" : C.kVK_RightArrow,
 
-    "KEY_L": 7,       // x
-    "KEY_R": 2,       // d
+    "KEY_L"     : C.kVK_ANSI_Q,
+    "KEY_R"     : C.kVK_ANSI_E,
 
-    "KEY_A": 27,      // -
-    "KEY_B": 24,      // =
+    "KEY_A"     : C.kVK_ANSI_A,
+    "KEY_B"     : C.kVK_ANSI_S,
 
-    "KEY_X": 6,       // z
-    "KEY_Y": 12,      // q
+    "KEY_X"     : C.kVK_ANSI_Z,
+    "KEY_Y"     : C.kVK_ANSI_X,
 
-    "KEY_START": 44,  // /
-    "KEY_SELECT": 11, // b
+    "KEY_START" : C.kVK_Return,
+    "KEY_SELECT": C.kVK_Space,
 }
 
 func KeyDown(key string) {
