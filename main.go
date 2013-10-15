@@ -28,39 +28,51 @@ func releaseAll() {
     }
 }
 
+func released(keys []string, key string) bool {
+    for _, newKey := range keys {
+        if newKey == key {
+            return false
+        }
+    }
+
+    return true
+}
+
+
 func main() {
-    addr, err := net.ResolveUDPAddr("udp", fmt.Sprintf(":%d", port))
+    fullAddr := fmt.Sprintf(":%d", port)
+    addr, err := net.ResolveUDPAddr("udp", fullAddr)
 
     log.Print(addr)
 
     if err != nil {
-        panic(err);
+        log.Panicf("Wrong address %v: %v", fullAddr, err);
     }
 
     sock, err := net.ListenUDP("udp", addr)
 
     if err != nil {
-        panic(err);
+        log.Panicf("Cannot listen from %v: %v", fullAddr, err);
     }
 
     buf := [11]byte{}
 
     for {
-        _, err := sock.Read(buf[0:]) 
-        if err != nil {
-            panic(err)
+        if _, err := sock.Read(buf[0:]); err != nil {
+            log.Printf("ERROR::%v", err)
+            continue
         }
 
+        // first 4 bytes contains status of pad buttons
         payload := buf[:4]
 
         keys := parser.DetectKeys(payload);
 
+        // all buttons on gamepad released
         if len(keys) == 0 {
             releaseAll()
             continue
         }
-
-        log.Printf("%v --- %v", payload, keys)
 
         for _, key := range keys {
             stillDown, wasPressed := status[key]
