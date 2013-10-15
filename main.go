@@ -11,11 +11,15 @@ import (
 
 var (
     port int
-    status map[string] bool
+    verbose bool
+
+    status map[string] bool // used to determine when to release keys
 )
 
 func init() {
     flag.IntVar(&port, "port", 9501, "DS2KEY Port")
+    flag.BoolVar(&verbose, "verbose", false, "Enable logging of keystrokes on stderr")
+
     status = make(map[string] bool)
 }
 
@@ -84,6 +88,13 @@ func main() {
             }
 
             status[key] = true
+        }
+
+        for key, wasPressed := range status {
+            if wasPressed && released(keys, key) {
+                kbd.KeyUp(key)
+                status[key] = false
+            }
         }
     }
 }
