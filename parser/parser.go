@@ -12,12 +12,12 @@ func DetectKeys(payload []byte) []string {
     pressedKeys := []string{}
 
     for offset, keys := range KEYS {
-        inValue := uint32(payload[offset])
+        value := uint32(payload[offset])
 
         for n, keyStr := range keys {
-            value := uint32(1 << uint32(n))
+            mask := uint32(1 << uint32(n))
 
-            if (inValue & value) == value {
+            if (value & mask) == mask {
                 pressedKeys = append(pressedKeys, keyStr)
             }
         }
