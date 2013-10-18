@@ -81,7 +81,7 @@ all the gamepad buttons:
 
 For each byte, we can use an array to represent it's bits.
 
-```golang
+```go
 byte2 := []string{"KEY_A",        // 1 << 0 = 1
                   "KEY_B",
                   "KEY_SELECT",   // 1 << 2 = 4
@@ -104,7 +104,7 @@ shifting 1 left `index` times.
 ### Packet parsing
 We now associate the previously defined array to an offset, using a map.
 
-```golang
+```go
 var KEYS = map[uint32] []string {
     2: []string{"KEY_A", "KEY_B",
                 "KEY_SELECT", "KEY_START",
@@ -134,7 +134,7 @@ Now, we iterate as usual our array of KEYS, we find the integer value by shiftin
 A bitwise and took binary value of two integers variable and apply `and` on them. 
 Since a `and` return 1 only if both bit are 1, we can easily isolate the bit we need to check.
 
-```golang
+```go
 
 ---iteration 0
 KEY_A, 
@@ -168,7 +168,7 @@ KEY_START,
 ```
 
 ### Show me the code!
-```golang
+```go
 package parser
 
 // Key is offset of the byte we need to parse
@@ -314,7 +314,7 @@ Pseudo code for this file is:
 - loop forever
 
 
-```golang
+```go
 package main
 
 import (
