@@ -4,11 +4,11 @@
 Source code for this program can be found on [here](https://github.com/andreadipersio/ds2key-srv).
 
 ### The problem
-Nintendo DS is a funny little console! I love it's gamepad, which remind to me the glorious SNES gamepad. 
-It also sports WIFI capabilities (with no support for WPA).
-One day, I was thinking
+Nintendo DS is a funny little console! I love it's gamepad, which remind me the glorious SNES gamepad. 
+It also sports WIFI capabilities (sadly with no support for WPA).
+One day, I was thinking:
 
-<< Hey! Wouldn't be super cool if I can use the DS as a gamepad ? >>
+*<< Hey! Wouldn't be super cool if I can use the DS as a gamepad ? >>*
 
 So I did some research on google and I found this project called [DS2Key](https://code.google.com/p/ds2key/).
 
@@ -23,7 +23,7 @@ First things I did was understanding what the server program has to do, which bo
 - Decoding UDP packets into an array of human friendly key codes
 - Emitting keystrokes
 
-First two point are very easy to implement on almost every programming language, the third one otherwise is more tricky. Doing some research I found that is possibile to emulate low level input event using [Quartz Tap Event](https://developer.apple.com/library/mac/documentation/Carbon/Reference/QuartzEventServicesRef/Reference/reference.html), which are parts of the OSX Application Services framework.
+First two point are very easy to implement on almost every programming language, the third one otherwise is more tricky. Doing some research I found that is possibile to emulate low level input events using [Quartz Tap Event](https://developer.apple.com/library/mac/documentation/Carbon/Reference/QuartzEventServicesRef/Reference/reference.html), which are parts of the OSX Application Services framework.
 
 After a small tour on XCode, trying to code the whole thing in Objective C, I discovered that Application Services framework is written in C, and GO language can embed C code through [CGO package](http://golang.org/cmd/cgo/). We'll come back to CGO later.
 
@@ -31,7 +31,7 @@ After a small tour on XCode, trying to code the whole thing in Objective C, I di
 DS2Key packet payload is 11 bytes long. 
 
 Nintendo DS has 12 buttons, since a single button can be ON/OFF we 
-can represent this status using a bit for each key. We need a total 
+can represent it's status using a bit for each key, needing a total 
 of 12 bit (3 nibbles). Since a byte is 8 bit, we have to use 2 byte to represent
 that status of game pad.
 
@@ -116,7 +116,7 @@ var KEYS = map[uint32] []string {
 
 Pseudo code for parsing:
 
-- iterate KEYS map; we got the `offset` and the `keys` represented by this offet
+- iterate KEYS map; we got the `offset` and the `keys` represented by this offset
 - get `byte integer value` at offset
 - iterate throught keys, we have an `index` and the `string value`
     - get `integer value` of key using a left shift: `1 << index`
@@ -131,8 +131,8 @@ If, we press START and SELECT key on the nintendo ds, we get:
 
 Now, we iterate as usual our array of KEYS, we find the integer value by shifting left, but before comparing the current item value, we apply a `bitmask` using a `bitwise and`.
 
-A bitwise and took binary value of two integers variable and apply `and` on them. 
-Since a `and` return 1 only if both bit are 1, we can easily isolate the bit we need to check.
+A bitwise and took binary value of two integers variable and apply a `logical and` on them. 
+Since logical and return 1 only if both bit are 1, we can easily isolate the bit we need to check.
 
 ```go
 
@@ -205,7 +205,7 @@ func DetectKeys(payload []byte) []string {
 Easy.
 
 ### Defining key binding
-Our tiny parser return an array of strings, each string is an human readable label of a key. Since I am a lazy programmer, binding with keyboard keys will be hard coded. 
+Our tiny parser return an array of strings, each string is an human readable label of a key. Since I am a lazy programmer, at the moment binding with keyboard keys will be hard coded, no fancy configuration files.
 The biggest drawnback is that letters keycodes depends on your keyboard layout.
 So, excluding modifier and special keys (RETURN, SPACE, etc) other keys will be
 different for each layout.
@@ -288,6 +288,7 @@ With `C package` we can also call variables, and make type conversion from GO ty
 
 ### Tie up everything
 We now have two files:
+
 - `parser/parser.go`
 - `kbd/kbd.go`
 
